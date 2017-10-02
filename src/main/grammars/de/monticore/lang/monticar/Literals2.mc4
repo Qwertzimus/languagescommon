@@ -35,7 +35,7 @@ grammar Literals2 extends de.monticore.lexicals.Lexicals, siunit.monticoresiunit
   /*========================================================================*/
   ast BooleanLiteral =
     method public boolean getValue() {
-      return this.source == de.monticore.literals.literals._ast.ASTConstantsLiterals.TRUE;
+      return this.source == de.monticore.lang.monticar.literals2._ast.ASTConstantsLiterals2.TRUE;
     }
   ;
 

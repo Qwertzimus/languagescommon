@@ -30,7 +30,7 @@
 
   <groupId>de.monticore.lang.monticar</groupId>
   <artifactId>common-monticar</artifactId>
-  <version>0.0.2-SNAPSHOT</version>
+  <version>0.0.3-SNAPSHOT</version>
 
   <!-- == PROJECT DEPENDENCIES ============================================= -->
 
@@ -48,7 +48,7 @@
 	<jscience.version>4.3.1</jscience.version>
 
     <!-- .. Plugins ....................................................... -->
-    <monticore.plugin>4.5.3-SNAPSHOT</monticore.plugin>
+    <monticore.plugin>4.5.3</monticore.plugin>
     <assembly.plugin>2.5.4</assembly.plugin>
     <compiler.plugin>3.3</compiler.plugin>
     <source.plugin>2.4</source.plugin>
@@ -64,7 +64,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>
-
+  
   <dependencies>
     <dependency>
       <groupId>de.se_rwth.commons</groupId>
@@ -263,12 +263,12 @@
 
   <distributionManagement>
     <repository>
-      <id>se-nexus</id>
-      <url>http://nexus.se.rwth-aachen.de/content/repositories/monticore-releases/</url>
+      <id>github</id>
+      <url>https://raw.githubusercontent.com/EmbeddedMontiArc/external-dependencies/master/</url>
     </repository>
     <snapshotRepository>
-      <id>se-nexus</id>
-      <url>http://nexus.se.rwth-aachen.de/content/repositories/monticore-snapshots/</url>
+      <id>github</id>
+      <url>https://raw.githubusercontent.com/EmbeddedMontiArc/external-dependencies/master/</url>
     </snapshotRepository>
   </distributionManagement>
 </project>

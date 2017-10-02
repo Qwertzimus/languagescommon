@@ -79,7 +79,7 @@ public class ASTUnitNumberResolution extends ASTUnitNumberResolutionTOP {
                     setNumber(toSet.getNumber().get());
                     setUnit(toSet.getUnit().get());
                     Log.debug("" + getNumber().get().intValue(), "PortResolution Number:");
-
+                    Log.debug(getName().get(),"Name:");
                     return getName().get();
                 }
             }

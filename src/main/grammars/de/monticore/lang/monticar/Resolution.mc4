@@ -20,6 +20,12 @@
 package de.monticore.lang.monticar;
 
 grammar Resolution extends de.monticore.lang.monticar.Literals2{
+    ast ResolutionDeclaration = method public String getName(){
+        return "implement Name!";
+    }
+    method public String getTypeName(){
+        return "implement TypeName!";
+    };
    interface ResolutionDeclaration;
    ast Resolution= method public Optional<String> getName(){
     return Optional.Empty;
@@ -32,9 +38,11 @@ grammar Resolution extends de.monticore.lang.monticar.Literals2{
    method public Optional<String> getName(){
         return Optional.of(this.name);
    };
-
-   NameResolution implements Resolution=Name;
-   NameResolutionDeclaration implements ResolutionDeclaration=Name ("=" Resolution);
+   ast NameResolutionDeclaration = method public String getTypeName(){
+    return null;
+   };
+   NameResolution implements Resolution = Name;
+   NameResolutionDeclaration implements ResolutionDeclaration = Name ("=" Resolution);
 
 
    /*** Put here due to intergrammar dependencies***/

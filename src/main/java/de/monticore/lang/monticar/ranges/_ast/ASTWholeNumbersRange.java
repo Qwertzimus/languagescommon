@@ -22,6 +22,9 @@ package de.monticore.lang.monticar.ranges._ast;
 
 import org.jscience.mathematics.number.Rational;
 import siunit.monticoresiunit.si._ast.*;
+
+import javax.measure.unit.Unit;
+
 /**
  * @author Sascha
  */
@@ -30,7 +33,7 @@ public class ASTWholeNumbersRange extends ASTWholeNumbersRangeTOP {
         super();
 
         setStartValue("-oo");
-        setStepValue(new ASTUnitNumber(Rational.ONE, null));
+        setStepValue(new ASTUnitNumber(Rational.ONE, Unit.ONE));
         setEndValue("oo");
         //null,new ASTUnitNumber(Rational.ONE, null), new ASTUnitNumber(Rational.ONE, null), "oo", null, false, false);
 

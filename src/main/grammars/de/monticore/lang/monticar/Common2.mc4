@@ -115,4 +115,11 @@ ast Stereotype =
   ArrayAccess = ("[" ( intLiteral:UnitNumberResolution | [":"] | lowerbound:UnitNumberResolution ":" upperbound:UnitNumberResolution) "]" );
   ArrayDeclaration = "[" intLiteral:UnitNumberResolution "]" ;
 
+    ast CommonMatrixType= method public String printType(){return "CommonMatrixType";};
+    CommonMatrixType implements PrintType, Type = ElementType CommonDimension;
+
+    CommonDimension = "^" "{" (CommonDimensionElement || ",")+ "}";
+    CommonDimensionElement = Name& | UnitNumber;
+
+
 }

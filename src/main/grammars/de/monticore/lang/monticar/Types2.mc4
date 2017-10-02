@@ -32,9 +32,10 @@ grammar Types2 extends de.monticore.lang.monticar.Literals2, siunit.monticoresiu
 
 
 
-  UnitNumberTypeArgument implements TypeArgument = UnitNumber;
+  ast UnitNumberTypeArgument= method public String printType(){return "UnitNumberTypeArgument";};
+  UnitNumberTypeArgument implements PrintType, TypeArgument  = UnitNumber;
 
-  ast UnitNumberResolution= method public String printType(){return "implement me!";};
+  ast UnitNumberResolution= method public String printType(){return "UnitNumberResolution";};
   UnitNumberResolution implements PrintType, Resolution, TypeArgument = Name | UnitNumber;
 
      /*========================================================================*/
@@ -95,28 +96,28 @@ grammar Types2 extends de.monticore.lang.monticar.Literals2, siunit.monticoresiu
               return "";
             }
             method public boolean isBoolean(){
-              return this.getPrimitive()==de.monticore.types.types._ast.ASTConstantsTypes.BOOLEAN;
+              return this.getPrimitive()==de.monticore.lang.monticar.types2._ast.ASTConstantsTypes2.BOOLEAN;
             }
             method public boolean isByte(){
-              return this.getPrimitive()==de.monticore.types.types._ast.ASTConstantsTypes.BYTE;
+              return this.getPrimitive()==de.monticore.lang.monticar.types2._ast.ASTConstantsTypes2.BYTE;
             }
             method public boolean isChar(){
-              return this.getPrimitive()==de.monticore.types.types._ast.ASTConstantsTypes.CHAR;
+              return this.getPrimitive()==de.monticore.lang.monticar.types2._ast.ASTConstantsTypes2.CHAR;
             }
             method public boolean isShort(){
-              return this.getPrimitive()==de.monticore.types.types._ast.ASTConstantsTypes.SHORT;
+              return this.getPrimitive()==de.monticore.lang.monticar.types2._ast.ASTConstantsTypes2.SHORT;
             }
             method public boolean isInt(){
-              return this.getPrimitive()==de.monticore.types.types._ast.ASTConstantsTypes.INT;
+              return this.getPrimitive()==de.monticore.lang.monticar.types2._ast.ASTConstantsTypes2.INT;
             }
             method public boolean isFloat(){
-              return this.getPrimitive()==de.monticore.types.types._ast.ASTConstantsTypes.FLOAT;
+              return this.getPrimitive()==de.monticore.lang.monticar.types2._ast.ASTConstantsTypes2.FLOAT;
             }
             method public boolean isLong(){
-              return this.getPrimitive()==de.monticore.types.types._ast.ASTConstantsTypes.LONG;
+              return this.getPrimitive()==de.monticore.lang.monticar.types2._ast.ASTConstantsTypes2.LONG;
             }
             method public boolean isDouble(){
-              return this.getPrimitive()==de.monticore.types.types._ast.ASTConstantsTypes.DOUBLE;
+              return this.getPrimitive()==de.monticore.lang.monticar.types2._ast.ASTConstantsTypes2.DOUBLE;
             };
 
         ast ReferenceType astextends ASTType;
@@ -316,7 +317,7 @@ grammar Types2 extends de.monticore.lang.monticar.Literals2, siunit.monticoresiu
             @attribute upperBounds Optional list of required super classes
         */
         TypeVariableDeclaration =
-            (ResolutionDeclaration)|(name:Name
+            (ResolutionDeclaration)|(NamingResolution
             (
               "extends" upperBounds:ComplexReferenceType
               ("&" upperBounds:ComplexReferenceType)*
@@ -338,7 +339,7 @@ grammar Types2 extends de.monticore.lang.monticar.Literals2, siunit.monticoresiu
     // since Q(1 : 7) would conflict with with vector expression, we need to define
     // it as token, and then parse the token later on
     // this due to the fact that MC4 does not support island grammars such as Antlr4
-    ElementType = TElementType |
+    ElementType implements Type= TElementType |
                  [isWholeNumberNumber:"Z"] |
                  [isRational:"Q"] |
                  [isComplex:"C"] |
@@ -361,7 +362,16 @@ grammar Types2 extends de.monticore.lang.monticar.Literals2, siunit.monticoresiu
 
 
     /** put here because of dependencies**/
+    ast TypeNameResolutionDeclaration = method public String getTypeName(){
+        return getType().toString();
+    };
     TypeNameResolutionDeclaration implements ResolutionDeclaration = Type Name ("=" Resolution);
+    ast UnitNumberResolutionDeclaration = method public String getTypeName(){
+            return getType().toString();
+    };
     UnitNumberResolutionDeclaration implements ResolutionDeclaration = Type name:Name ("=" UnitNumber)?;
-
+    ast NamingResolution= method public String getTypeName(){
+                return null;
+    };
+    NamingResolution implements ResolutionDeclaration = Name;
     }

@@ -57,7 +57,7 @@ grammar Ranges extends de.monticore.lang.monticar.Types2, siunit.monticoresiunit
      *   "ports in [(0 : 0.05 : 10) (10 : 0.1 : 45°)] steering;"
     */
     ast Ranges = method public String printType(){
-    return "RangesType";
+        return "RangesType";
     };
 
     Ranges implements PrintType, TypeArgument="["
