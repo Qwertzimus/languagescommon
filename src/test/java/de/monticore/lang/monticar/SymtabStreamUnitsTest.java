@@ -25,6 +25,7 @@ import de.monticore.io.paths.ModelPath;
 import de.monticore.lang.monticar.streamunits._symboltable.ComponentStreamUnitsSymbol;
 import de.monticore.lang.monticar.streamunits._symboltable.NamedStreamUnitsSymbol;
 import de.monticore.lang.monticar.streamunits._symboltable.StreamUnitsLanguage;
+import de.monticore.lang.monticar.streamunits._symboltable.StreamValuePrecision;
 import de.monticore.symboltable.GlobalScope;
 import de.monticore.symboltable.Scope;
 import de.se_rwth.commons.logging.Log;
@@ -68,6 +69,17 @@ public class SymtabStreamUnitsTest {
         NamedStreamUnitsSymbol namedStreamSymbol = symTab.<NamedStreamUnitsSymbol>resolve(
                 "advancedLibrary.RSFlipFlop.In_S", NamedStreamUnitsSymbol.KIND).orElse(null);
         assertNotNull(namedStreamSymbol);
+    }
+
+
+    @Test
+    public void testResolvePrecisionStreamUnit() {
+        Scope symTab = createSymTab("src/test/resources/unitstreams/streams");
+
+        NamedStreamUnitsSymbol namedStreamSymbol = symTab.<NamedStreamUnitsSymbol>resolve(
+                "advancedLibrary.Counter.in1", NamedStreamUnitsSymbol.KIND).orElse(null);
+        assertNotNull(namedStreamSymbol);
+        assertEquals("1/2 ",((StreamValuePrecision)namedStreamSymbol.getValue(0)).getPrecision().toString());
     }
 
     @Ignore("ModelPath#resolveModel does not support loading a collection, which should be done when resolving many")

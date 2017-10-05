@@ -34,5 +34,7 @@ grammar StreamUnits extends siunit.monticoresiunit.SI, de.monticore.lang.montica
 
   symbol scope NamedStreamUnits = Name ":" Stream ";" ;
 
-  Stream = (UnitNumber| SignedLiteral | "tick")+;
+  Stream = (PrecisionNumber | SignedLiteral | "tick" )+;
+  PrecisionNumber = UnitNumber (Precision)?;
+  Precision = "+" "/" "-" UnitNumber;
 }
