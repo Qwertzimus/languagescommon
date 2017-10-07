@@ -22,6 +22,8 @@ package de.monticore.lang.monticar;
 
 import de.monticore.lang.monticar.ranges._parser.RangesParser;
 import de.monticore.lang.monticar.ranges._ast.ASTRange;
+import de.monticore.lang.monticar.types2._ast.ASTElementType;
+import de.monticore.lang.monticar.types2._parser.Types2Parser;
 import de.se_rwth.commons.logging.Log;
 import org.junit.*;
 
@@ -261,6 +263,22 @@ public class SIParserTest {
         assertNotNull(ast);
     }
 
+    @Test
+    public void testRangeDegreeUnit1() throws IOException{
+        Types2Parser parser = new Types2Parser();
+        ASTElementType ast = parser.parseString_ElementType("Q(10 deg: 0.1 : 45 )").orElse(null);
+        assertNotNull(ast);
+
+    }
+
+
+    @Test
+    public void testRangeDegreeUnit2() throws IOException{
+        Types2Parser parser = new Types2Parser();
+        ASTElementType ast = parser.parseString_ElementType("Q(-90°:0.001°:90°)").orElse(null);
+        assertNotNull(ast);
+
+    }
 /*
     @Test
     public void testRange7() throws IOException {

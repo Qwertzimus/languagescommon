@@ -33,8 +33,8 @@ import siunit.monticoresiunit.si._ast.*;
  * @author Michael von Wenckstern, Sascha Schneiders
  */
 public class ASTRange extends ASTRangeTOP {
-    public ASTRange(String startInf, ASTUnitNumber start, ASTUnitNumber step, String endInf, ASTUnitNumber end, boolean d, boolean f) {
-        super(startInf, start, step, endInf, end, d, f);
+    public ASTRange(String startInf, ASTUnitNumber start, ASTUnitNumber step, String endInf, ASTUnitNumber end, boolean z, boolean q, boolean c ,boolean d, boolean f) {
+        super(startInf, start, step, endInf, end, z, q, c, d, f);
         fixUnits();
     }
 
