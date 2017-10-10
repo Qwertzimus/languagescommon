@@ -65,7 +65,11 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <github.global.server>github</github.global.server>
   </properties>
-  
+  <scm>
+    <url>https://github.com/EmbeddedMontiArc/languagescommon</url>
+    <connection>scm:git:git://github.com/EmbeddedMontiArc/languagescommon.git</connection>
+    <developerConnection>scm:git:git@github.com:EmbeddedMontiArc/languagescommon.git</developerConnection>
+  </scm>
   <dependencies>
     <dependency>
       <groupId>de.se_rwth.commons</groupId>
