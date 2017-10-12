@@ -58,7 +58,7 @@ public class SymtabStreamUnitsTest {
         Scope symTab = createSymTab("src/test/resources/unitstreams/streams");
         Log.debug(symTab.toString(),"SymTab:");
         ComponentStreamUnitsSymbol comp = symTab.<ComponentStreamUnitsSymbol>resolve(
-                "basicLibrary.And", ComponentStreamUnitsSymbol.KIND).orElse(null);
+                "basicLibrary.AndTest", ComponentStreamUnitsSymbol.KIND).orElse(null);
         assertNotNull(comp);
     }
 
@@ -67,7 +67,7 @@ public class SymtabStreamUnitsTest {
         Scope symTab = createSymTab("src/test/resources/unitstreams/streams");
 
         NamedStreamUnitsSymbol namedStreamSymbol = symTab.<NamedStreamUnitsSymbol>resolve(
-                "advancedLibrary.RSFlipFlop.In_S", NamedStreamUnitsSymbol.KIND).orElse(null);
+                "advancedLibrary.RSFlipFlopTest.In_S", NamedStreamUnitsSymbol.KIND).orElse(null);
         assertNotNull(namedStreamSymbol);
     }
 
@@ -77,7 +77,7 @@ public class SymtabStreamUnitsTest {
         Scope symTab = createSymTab("src/test/resources/unitstreams/streams");
 
         NamedStreamUnitsSymbol namedStreamSymbol = symTab.<NamedStreamUnitsSymbol>resolve(
-                "advancedLibrary.Counter.in1", NamedStreamUnitsSymbol.KIND).orElse(null);
+                "advancedLibrary.CounterTest.in1", NamedStreamUnitsSymbol.KIND).orElse(null);
         assertNotNull(namedStreamSymbol);
         assertEquals("1/2 ",((StreamValuePrecision)namedStreamSymbol.getValue(0)).getPrecision().toString());
     }
@@ -88,7 +88,7 @@ public class SymtabStreamUnitsTest {
         Scope symTab = createSymTab("src/test/resources/unitstreams/streams", "src/test/resources/unitstreams/streams2");
 
         Collection<NamedStreamUnitsSymbol> namedStreamSymbols = symTab.<NamedStreamUnitsSymbol>resolveMany(
-                "advancedLibrary.RSFlipFlop.In_S", NamedStreamUnitsSymbol.KIND);
+                "advancedLibrary.RSFlipFlopTest.In_S", NamedStreamUnitsSymbol.KIND);
         assertEquals(2, namedStreamSymbols.size());
     }
 }

@@ -69,7 +69,7 @@ public class StreamUnitsSymbolTableCreator extends StreamUnitsSymbolTableCreator
 
     @Override
     public void visit(ASTComponentStreamUnits node) {
-        ComponentStreamUnitsSymbol streamSymbol = new ComponentStreamUnitsSymbol(node.getComponentName());
+        ComponentStreamUnitsSymbol streamSymbol = new ComponentStreamUnitsSymbol(node.getName());
         addToScopeAndLinkWithNode(streamSymbol, node);
     }
 
