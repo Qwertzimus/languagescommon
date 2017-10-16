@@ -50,8 +50,7 @@ public class IndentPrinterHandler {
         this.functions = functions;
     }
 
-    @Override
-    public String toString() {
+    public void toStringProcessing() {
         for (int i = 0; i < groups.size(); i++) {
             int j = 0;
             Matcher m = pattern.matcher(groups.get(i));
@@ -66,7 +65,11 @@ public class IndentPrinterHandler {
                 j++;
             }
         }
+    }
 
+    @Override
+    public String toString() {
+        toStringProcessing();
         IndentPrinter ip = new IndentPrinter();
         for (String g : groups) {
             // only one variable place holder per group
@@ -76,47 +79,14 @@ public class IndentPrinterHandler {
                 if (pos < params.size()) {
                     Object param = params.get(pos);
                     Function<Object, String> fnc = o -> o.toString();
-                    if (functions.containsKey(param.getClass())) {
+                    if (functions.containsKey(param.getClass()))
                         fnc = functions.get(param.getClass());
-                    }
-
                     if (param instanceof Collection) {
-                        List c = Lists.newArrayList((Collection) param);
-                        if (m.group(2) != null && m.group(3) != null &&
-                                !c.isEmpty()) {
-                            ip.print(m.group(2));
-                        }
-                        String delim = "";
-                        if (m.group(2) != null && m.group(3) == null) {
-                            delim = m.group(2);
-                        } else if (m.group(2) != null && m.group(3) != null && m.group(4) != null) {
-                            delim = m.group(3);
-                        }
-                        for (int i = 0; i < c.size(); i++) {
-                            if (functions.containsKey(c.get(i).getClass())) {
-                                ip.print(g.replace(m.group(0), functions.get(c.get(i).getClass()).apply(c.get(i))));
-                            } else {
-                                ip.print(g.replace(m.group(0), c.get(i).toString()));
-                            }
-                            if (i != c.size() - 1) {
-                                ip.print(delim);
-                            }
-                        }
-                        if (m.group(2) != null && m.group(3) != null && m.group(4) == null && !c.isEmpty()) {
-                            ip.print(m.group(3));
-                        } else if (m.group(2) != null && m.group(3) != null && m.group(4) != null && !c.isEmpty()) {
-                            ip.print(m.group(4));
-                        }
+                        printCollection(param, m, ip, g);
                     } else if (param instanceof Optional) {
-                        if (((Optional) param).isPresent()) {
-                            if (functions.containsKey(((Optional) param).get().getClass())) {
-                                fnc = functions.get(param.getClass());
-                            }
-                            ip.print(g.replace(m.group(0), fnc.apply(((Optional) param).get())));
-                        }
-                    } else {
+                        fnc = printOptional(param, m, ip, g, fnc);
+                    } else
                         ip.print(g.replace(m.group(0), fnc.apply(param)));
-                    }
                 } else {
                     Log.warn("Index " + pos +
                             " is out of range. No object at this position is specified, please startVal at 0. The string " +
@@ -126,5 +96,44 @@ public class IndentPrinterHandler {
             }
         }
         return ip.getContent();
+    }
+
+    public Function<Object, String> printOptional(Object param, Matcher m, IndentPrinter ip, String g, Function<Object, String> fnc) {
+        if (((Optional) param).isPresent()) {
+            if (functions.containsKey(((Optional) param).get().getClass())) {
+                fnc = functions.get(param.getClass());
+            }
+            ip.print(g.replace(m.group(0), fnc.apply(((Optional) param).get())));
+        }
+        return fnc;
+    }
+
+    public void printCollection(Object param, Matcher m, IndentPrinter ip, String g) {
+        List c = Lists.newArrayList((Collection) param);
+        if (m.group(2) != null && m.group(3) != null &&
+                !c.isEmpty()) {
+            ip.print(m.group(2));
+        }
+        String delim = "";
+        if (m.group(2) != null && m.group(3) == null) {
+            delim = m.group(2);
+        } else if (m.group(2) != null && m.group(3) != null && m.group(4) != null) {
+            delim = m.group(3);
+        }
+        for (int i = 0; i < c.size(); i++) {
+            if (functions.containsKey(c.get(i).getClass())) {
+                ip.print(g.replace(m.group(0), functions.get(c.get(i).getClass()).apply(c.get(i))));
+            } else {
+                ip.print(g.replace(m.group(0), c.get(i).toString()));
+            }
+            if (i != c.size() - 1) {
+                ip.print(delim);
+            }
+        }
+        if (m.group(2) != null && m.group(3) != null && m.group(4) == null && !c.isEmpty()) {
+            ip.print(m.group(3));
+        } else if (m.group(2) != null && m.group(3) != null && m.group(4) != null && !c.isEmpty()) {
+            ip.print(m.group(4));
+        }
     }
 }
