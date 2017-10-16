@@ -41,13 +41,13 @@ public class IndentPrinterParameter {
 
     @Override
     public String toString() {
-        return (new IndentPrinter.IndentPrinterHandler(groups, params, new LinkedHashMap<>()).toString());
+        return (new IndentPrinterHandler(groups, params, new LinkedHashMap<>()).toString());
     }
 
-    public <A> IndentPrinter.IndentPrinterHandler handle(Class<? extends A> clazz, Function<A, String> handle1) {
+    public <A> IndentPrinterHandler handle(Class<? extends A> clazz, Function<A, String> handle1) {
         Map<Class, Function<Object, String>> map = new LinkedHashMap<>();
         map.put(clazz, (Function<Object, String>) handle1);
-        return new IndentPrinter.IndentPrinterHandler(groups, params, map);
+        return new IndentPrinterHandler(groups, params, map);
     }
 
 //    public <A, B> IndentPrinterHandler handle(Supplier<A> handle1, Supplier<B> handle2) {

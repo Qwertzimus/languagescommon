@@ -22,7 +22,6 @@ package de.monticore.lang.monticar.helper;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-
 /**
  * @author Sascha Schneiders
  */
@@ -37,7 +36,7 @@ public class IndentPrinterGroup {
 
     @Override
     public String toString() {
-        return (new IndentPrinter.IndentPrinterHandler(groups, new ArrayList<>(), new LinkedHashMap<>())).toString();
+        return (new IndentPrinterHandler(groups, new ArrayList<>(), new LinkedHashMap<>())).toString();
     }
 
 
@@ -46,36 +45,36 @@ public class IndentPrinterGroup {
     // is not possible in Java
 
 
-    public <A> IndentPrinter.IndentPrinterParameter params(A param1) {
-        return new IndentPrinter.IndentPrinterParameter(groups, param1);
+    public <A> IndentPrinterParameter params(A param1) {
+        return new IndentPrinterParameter(groups, param1);
     }
 
-    public <A, B> IndentPrinter.IndentPrinterParameter params(A param1, B param2) {
-        return new IndentPrinter.IndentPrinterParameter(groups, param1, param2);
+    public <A, B> IndentPrinterParameter params(A param1, B param2) {
+        return new IndentPrinterParameter(groups, param1, param2);
     }
 
-    public <A, B, C> IndentPrinter.IndentPrinterParameter params(A param1, B param2, C param3) {
-        return new IndentPrinter.IndentPrinterParameter(groups, param1, param2, param3);
+    public <A, B, C> IndentPrinterParameter params(A param1, B param2, C param3) {
+        return new IndentPrinterParameter(groups, param1, param2, param3);
     }
 
-    public <A, B, C, D> IndentPrinter.IndentPrinterParameter params(A param1, B param2, C param3, D param4) {
-        return new IndentPrinter.IndentPrinterParameter(groups, param1, param2, param3, param4);
+    public <A, B, C, D> IndentPrinterParameter params(A param1, B param2, C param3, D param4) {
+        return new IndentPrinterParameter(groups, param1, param2, param3, param4);
     }
 
-    public <A, B, C, D, E> IndentPrinter.IndentPrinterParameter params(A param1, B param2, C param3, D param4, E param5) {
-        return new IndentPrinter.IndentPrinterParameter(groups, param1, param2, param3, param4, param5);
+    public <A, B, C, D, E> IndentPrinterParameter params(A param1, B param2, C param3, D param4, E param5) {
+        return new IndentPrinterParameter(groups, param1, param2, param3, param4, param5);
     }
 
-    public <A, B, C, D, E, F> IndentPrinter.IndentPrinterParameter params(A param1, B param2, C param3, D param4, E param5, F param6) {
-        return new IndentPrinter.IndentPrinterParameter(groups, param1, param2, param3, param4, param5, param6);
+    public <A, B, C, D, E, F> IndentPrinterParameter params(A param1, B param2, C param3, D param4, E param5, F param6) {
+        return new IndentPrinterParameter(groups, param1, param2, param3, param4, param5, param6);
     }
 
-    public <A, B, C, D, E, F, G> IndentPrinter.IndentPrinterParameter params(A param1, B param2, C param3, D param4, E param5, F param6, G param7) {
-        return new IndentPrinter.IndentPrinterParameter(groups, param1, param2, param3, param4, param5, param6, param7);
+    public <A, B, C, D, E, F, G> IndentPrinterParameter params(A param1, B param2, C param3, D param4, E param5, F param6, G param7) {
+        return new IndentPrinterParameter(groups, param1, param2, param3, param4, param5, param6, param7);
     }
 
-    public <A, B, C, D, E, F, G, H> IndentPrinter.IndentPrinterParameter params(A param1, B param2, C param3, D param4, E param5, F param6, G param7, H param8) {
-        return new IndentPrinter.IndentPrinterParameter(groups, param1, param2, param3, param4, param5, param6, param7, param8);
+    public <A, B, C, D, E, F, G, H> IndentPrinterParameter params(A param1, B param2, C param3, D param4, E param5, F param6, G param7, H param8) {
+        return new IndentPrinterParameter(groups, param1, param2, param3, param4, param5, param6, param7, param8);
     }
 
     // ...
