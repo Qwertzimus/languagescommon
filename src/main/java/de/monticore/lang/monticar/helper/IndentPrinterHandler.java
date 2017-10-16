@@ -1,0 +1,130 @@
+/**
+ *
+ *  ******************************************************************************
+ *  MontiCAR Modeling Family, www.se-rwth.de
+ *  Copyright (c) 2017, Software Engineering Group at RWTH Aachen,
+ *  All rights reserved.
+ *
+ *  This project is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU Lesser General Public
+ *  License as published by the Free Software Foundation; either
+ *  version 3.0 of the License, or (at your option) any later version.
+ *  This library is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *  Lesser General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Lesser General Public
+ *  License along with this project. If not, see <http://www.gnu.org/licenses/>.
+ * *******************************************************************************
+ */
+package de.monticore.lang.monticar.helper;
+
+import com.google.common.collect.Lists;
+import de.se_rwth.commons.logging.Log;
+
+import java.util.*;
+import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+/**
+ * @author Sascha Schneiders
+ */
+public class IndentPrinterHandler {
+    protected Map<Class, Function<Object, String>> functions;
+    protected ArrayList<Object> params;
+    protected ArrayList<String> groups;
+
+    // \{(\d)(?:\s*:\s*'([^']+)')?(?:\s*:\s*'([^']+)')?(?:\s*:\s*'([^']+)')?\}
+    // this finds (and groups it):
+    // {0}
+    // {1 : ','}
+    // {2 : 'before' : 'endVal'}
+    // {3 : 'before' : 'middle' : 'endVal'}
+    protected final static Pattern pattern = Pattern.compile("\\{(\\d)(?:\\s*:\\s*'([^']+)')?(?:\\s*:\\s*'([^']+)')?(?:\\s*:\\s*'([^']+)')?\\}");
+
+    protected IndentPrinterHandler(ArrayList<String> groups, ArrayList<Object> params, Map<Class, Function<Object, String>> functions) {
+        this.groups = groups;
+        this.params = params;
+        this.functions = functions;
+    }
+
+    @Override
+    public String toString() {
+        for (int i = 0; i < groups.size(); i++) {
+            int j = 0;
+            Matcher m = pattern.matcher(groups.get(i));
+            while (m.find()) {
+                if (j > 0) {
+                    String left = groups.get(i).substring(0, m.start());
+                    String right = groups.get(i).substring(m.start());
+                    groups.remove(i);
+                    groups.add(i, left);
+                    groups.add(i + 1, right);
+                }
+                j++;
+            }
+        }
+
+        IndentPrinter ip = new IndentPrinter();
+        for (String g : groups) {
+            // only one variable place holder per group
+            Matcher m = pattern.matcher(g);
+            if (m.find()) {
+                int pos = Integer.parseInt(m.group(1));
+                if (pos < params.size()) {
+                    Object param = params.get(pos);
+                    Function<Object, String> fnc = o -> o.toString();
+                    if (functions.containsKey(param.getClass())) {
+                        fnc = functions.get(param.getClass());
+                    }
+
+                    if (param instanceof Collection) {
+                        List c = Lists.newArrayList((Collection) param);
+                        if (m.group(2) != null && m.group(3) != null &&
+                                !c.isEmpty()) {
+                            ip.print(m.group(2));
+                        }
+                        String delim = "";
+                        if (m.group(2) != null && m.group(3) == null) {
+                            delim = m.group(2);
+                        } else if (m.group(2) != null && m.group(3) != null && m.group(4) != null) {
+                            delim = m.group(3);
+                        }
+                        for (int i = 0; i < c.size(); i++) {
+                            if (functions.containsKey(c.get(i).getClass())) {
+                                ip.print(g.replace(m.group(0), functions.get(c.get(i).getClass()).apply(c.get(i))));
+                            } else {
+                                ip.print(g.replace(m.group(0), c.get(i).toString()));
+                            }
+                            if (i != c.size() - 1) {
+                                ip.print(delim);
+                            }
+                        }
+                        if (m.group(2) != null && m.group(3) != null && m.group(4) == null && !c.isEmpty()) {
+                            ip.print(m.group(3));
+                        } else if (m.group(2) != null && m.group(3) != null && m.group(4) != null && !c.isEmpty()) {
+                            ip.print(m.group(4));
+                        }
+                    } else if (param instanceof Optional) {
+                        if (((Optional) param).isPresent()) {
+                            if (functions.containsKey(((Optional) param).get().getClass())) {
+                                fnc = functions.get(param.getClass());
+                            }
+                            ip.print(g.replace(m.group(0), fnc.apply(((Optional) param).get())));
+                        }
+                    } else {
+                        ip.print(g.replace(m.group(0), fnc.apply(param)));
+                    }
+                } else {
+                    Log.warn("Index " + pos +
+                            " is out of range. No object at this position is specified, please startVal at 0. The string " +
+                            m.group(0) + " will not replaced with empty string.");
+                    ip.print(g.replace(m.group(0), ""));
+                }
+            }
+        }
+        return ip.getContent();
+    }
+}
