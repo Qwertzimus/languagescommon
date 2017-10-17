@@ -33,14 +33,14 @@ import siunit.monticoresiunit.si._ast.*;
  * @author Michael von Wenckstern, Sascha Schneiders
  */
 public class ASTRange extends ASTRangeTOP {
-    public ASTRange(String startInf, ASTUnitNumber start, ASTUnitNumber step, String endInf, ASTUnitNumber end, boolean z, boolean q, boolean c ,boolean d, boolean f) {
+    public ASTRange(String startInf, ASTUnitNumber start, ASTUnitNumber step, String endInf, ASTUnitNumber end, boolean z, boolean q, boolean c, boolean d, boolean f) {
         super(startInf, start, step, endInf, end, z, q, c, d, f);
         fixUnits();
     }
 
     public void fixUnits() {
         if (start.isPresent()) {
-            if(!start.get().getUnit().isPresent()){
+            if (!start.get().getUnit().isPresent()) {
 
             }
         }
@@ -211,12 +211,7 @@ public class ASTRange extends ASTRangeTOP {
         return unitIdentifier;
     }
 
-    /**
-     * for propagating the units: (0 : 10 m) will become (0 m : 10 m)
-     */
-    public static void setupSIUnitRanges(List<ASTRange> ranges) {
-        Unit unitIdentifier = getUnitIdentifier(ranges);
-
+    public static Unit calculateUnitIdentifier(Unit unitIdentifier, List<ASTRange> ranges) {
         if (unitIdentifier == null) {
             for (ASTRange curRange : ranges) {
                 if (curRange.getStep().isPresent() && curRange.hasStepUnit()) {
@@ -225,31 +220,42 @@ public class ASTRange extends ASTRangeTOP {
                 }
             }
         }
+        return unitIdentifier;
+    }
 
+    /**
+     * for propagating the units: (0 : 10 m) will become (0 m : 10 m)
+     */
+    public static void setupSIUnitRanges(List<ASTRange> ranges) {
+        Unit unitIdentifier = getUnitIdentifier(ranges);
+
+        unitIdentifier = calculateUnitIdentifier(unitIdentifier, ranges);
         if (unitIdentifier == null) {
-
             Log.debug("Null", "Unitidentifier");
         }
         Log.debug("PRE SET " + ranges.size(), "LOC");
         if (unitIdentifier != null)
-            for (ASTRange curRange : ranges) {
-                Log.debug(curRange.toString() + "", "INFO");
-                if (!curRange.hasStartUnit() && curRange.getStart().isPresent()) {
-                    curRange.getStart().get().setUnit(unitIdentifier);
-                } else if (curRange.getStartInf().isPresent()) {
-                    curRange.setStartUnit(unitIdentifier);
-                }
+            updateUnitRanges(unitIdentifier, ranges);
+    }
 
-                if (curRange.getEnd().isPresent() && curRange.getEnd().isPresent()) {
-                    curRange.getEnd().get().setUnit(unitIdentifier);
-                } else if (curRange.getEndInf().isPresent()) {
-                    curRange.setEndUnit(unitIdentifier);
-                }
-                if (curRange.getStep().isPresent() && !curRange.hasStepUnit()) {
-                    curRange.getStep().get().setUnit(unitIdentifier);
-
-                }
+    public static void updateUnitRanges(Unit unitIdentifier, List<ASTRange> ranges) {
+        for (ASTRange curRange : ranges) {
+            Log.debug(curRange.toString() + "", "INFO");
+            if (!curRange.hasStartUnit() && curRange.getStart().isPresent()) {
+                curRange.getStart().get().setUnit(unitIdentifier);
+            } else if (curRange.getStartInf().isPresent()) {
+                curRange.setStartUnit(unitIdentifier);
             }
+
+            if (curRange.getEnd().isPresent() && curRange.getEnd().isPresent()) {
+                curRange.getEnd().get().setUnit(unitIdentifier);
+            } else if (curRange.getEndInf().isPresent()) {
+                curRange.setEndUnit(unitIdentifier);
+            }
+            if (curRange.getStep().isPresent() && !curRange.hasStepUnit()) {
+                curRange.getStep().get().setUnit(unitIdentifier);
+            }
+        }
     }
 
     /**
@@ -316,30 +322,21 @@ public class ASTRange extends ASTRangeTOP {
     public boolean isZRange() {
         if (!hasNoLowerLimit())
             return false;
-
         if (!hasNoUpperLimit())
             return false;
         return true;
     }
 
     public Unit getUnit() {
-        if (startInfIsPresent() && getUnit(startInf.get()) != null) {
-            return getUnit(startInf.get());
-        } else if (start.isPresent() && start.get().getUnit().isPresent() && !start.get().getUnit().equals(Unit.ONE)) {
-            return start.get().getUnit().get();
-        }
-
-        if (endInfIsPresent() && getUnit(endInf.get()) != null) {
-            return getUnit(endInf.get());
-        } else if (end.isPresent() && end.get().getUnit().isPresent() && !end.get().getUnit().equals(Unit.ONE)) {
-            return end.get().getUnit().get();
-        }
-
-
-        if (step.isPresent() && step.get().getUnit().isPresent() && !step.get().getUnit().equals(Unit.ONE)) {
-            return step.get().getUnit().get();
+        Unit unit = Unit.ONE;
+        if (hasStartUnit()) {
+            unit = getStartUnit();
+        } else if (hasEndUnit()) {
+            unit = getEndUnit();
+        } else if (step.isPresent() && step.get().getUnit().isPresent() && !step.get().getUnit().equals(Unit.ONE)) {
+            unit = step.get().getUnit().get();
         }
         Log.debug("No Unit present", "ASTRange:");
-        return Unit.ONE;
+        return unit;
     }
 }
