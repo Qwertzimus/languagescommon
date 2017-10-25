@@ -25,10 +25,7 @@
 package de.monticore.lang.monticar.streamunits._symboltable;
 
 import de.monticore.lang.monticar.literals2._ast.ASTSignedLiteral;
-import de.monticore.lang.monticar.streamunits._ast.ASTComponentStreamUnits;
-import de.monticore.lang.monticar.streamunits._ast.ASTNamedStreamUnits;
-import de.monticore.lang.monticar.streamunits._ast.ASTPrecisionNumber;
-import de.monticore.lang.monticar.streamunits._ast.ASTStreamUnitsCompilationUnit;
+import de.monticore.lang.monticar.streamunits._ast.*;
 import de.monticore.symboltable.ArtifactScope;
 import de.monticore.symboltable.MutableScope;
 import de.monticore.symboltable.ResolvingConfiguration;
@@ -81,17 +78,35 @@ public class StreamUnitsSymbolTableCreator extends StreamUnitsSymbolTableCreator
     @Override
     public void visit(ASTNamedStreamUnits node) {
         NamedStreamUnitsSymbol streamSymbol = new NamedStreamUnitsSymbol(node.getName(), id);
-        for (ASTPrecisionNumber num : node.getStream().getPrecisionNumbers()) {
+        for (ASTStreamInstruction streamInstruction : node.getStream().getStreamInstructions()) {
+            if (streamInstruction.getStreamValue().isPresent()) {
+                ASTStreamValue streamValue = streamInstruction.getStreamValue().get();
+                if (streamValue.getPrecisionNumber().isPresent()) {
+                    ASTPrecisionNumber num = streamValue.getPrecisionNumber().get();
+                    if (num.getPrecision().isPresent()) {
+                        streamSymbol.add(num.getUnitNumber(), num.getPrecision().get().getUnitNumber());
+                    } else {
+                        streamSymbol.add(new StreamValuePrecision(num.getUnitNumber()));
+                    }
 
-            if (num.getPrecision().isPresent()) {
-                streamSymbol.add(num.getUnitNumber(),num.getPrecision().get().getUnitNumber());
-            } else {
-                streamSymbol.add(num.getUnitNumber());
+                } else if (streamValue.getName().isPresent()) {
+                    streamSymbol.add(new StreamValuePrecision(streamValue.getName().get()));
+                } else if (streamValue.getSignedLiteral().isPresent()) {
+                    ASTSignedLiteral signedLiteral = streamInstruction.getStreamValue().get().getSignedLiteral().get();
+                    streamSymbol.add(new StreamValuePrecision(signedLiteral));
+                } else if (streamValue.getDontCare().isPresent()) {
+                    streamSymbol.add(new StreamValuePrecision("-"));
+                }else if(streamValue.getValueAtTick().isPresent()){
+                    ASTValueAtTick valueAtTick=streamValue.getValueAtTick().get();
+                    streamSymbol.add(new StreamValueAtTick(valueAtTick));
+                }
+            } else if (streamInstruction.getStreamCompare().isPresent()) {
+                ASTStreamCompare astStreamCompare = streamInstruction.getStreamCompare().get();
+                streamSymbol.add(new StreamCompare(new StreamValuePrecision(astStreamCompare.getLeft()),
+                        astStreamCompare.getOperator(), new StreamValuePrecision(astStreamCompare.getRight())));
             }
-        }
 
-        for (ASTSignedLiteral signedLiteral : node.getStream().getSignedLiterals()) {
-            streamSymbol.add(signedLiteral);
+
         }
         addToScopeAndLinkWithNode(streamSymbol, node);
     }

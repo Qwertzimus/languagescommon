@@ -18,53 +18,36 @@
  *  License along with this project. If not, see <http://www.gnu.org/licenses/>.
  * *******************************************************************************
  */
-package de.monticore.lang.monticar.streamunits._symboltable;
+package de.monticore.lang.monticar.streamunits._ast;
+
+import siunit.monticoresiunit.si._ast.ASTUnitNumber;
 
 /**
  * @author Sascha Schneiders
  */
-public class StreamValuePrecision {
-    protected Object value;
-    protected Object precision;
-
-    public StreamValuePrecision() {
-
+public class ASTValueAtTick extends ASTValueAtTickTOP {
+    public ASTValueAtTick() {
     }
 
-    public StreamValuePrecision(Object value) {
-        this.value = value;
-    }
-
-    public StreamValuePrecision(Object value, Object precision) {
-        this.value = value;
-        this.precision = precision;
-    }
-
-    public Object getValue() {
-        return value;
-    }
-
-    public void setValue(Object value) {
-        this.value = value;
-    }
-
-    public Object getPrecision() {
-        return precision;
-    }
-
-    public void setPrecision(Object precision) {
-        this.precision = precision;
-    }
-
-    public boolean hasPrecision() {
-        return precision != null;
+    public ASTValueAtTick(String name, ASTUnitNumber value, ASTUnitNumber lowerBound, ASTUnitNumber upperBound) {
+        super(name, value, lowerBound, upperBound);
     }
 
     @Override
     public String toString() {
-        if (precision != null) {
-            return value.toString() + " +/- " + precision.toString();
+        String result = "";
+        result += name + "(";
+        if (valueIsPresent()) {
+            result += value.get().getNumber().get().intValue();
+        } else {
+            if (lowerBoundIsPresent()) {
+                result += lowerBound.get().getNumber().get().intValue();
+            }
+            if (upperBoundIsPresent()) {
+                result += ":" + upperBound.get().getNumber().get().intValue();
+            }
         }
-        return value.toString();
+        result += ")";
+        return result;
     }
 }

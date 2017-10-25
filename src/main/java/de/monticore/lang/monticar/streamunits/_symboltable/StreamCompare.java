@@ -23,48 +23,38 @@ package de.monticore.lang.monticar.streamunits._symboltable;
 /**
  * @author Sascha Schneiders
  */
-public class StreamValuePrecision {
-    protected Object value;
-    protected Object precision;
+public class StreamCompare {
+    protected StreamValuePrecision left;
+    protected StreamValuePrecision right;
+    protected String operator;
 
-    public StreamValuePrecision() {
-
+    public StreamCompare(StreamValuePrecision left, String operator, StreamValuePrecision right) {
+        this.left = left;
+        this.operator = operator;
+        this.right = right;
     }
 
-    public StreamValuePrecision(Object value) {
-        this.value = value;
+    public StreamValuePrecision getLeft() {
+        return left;
     }
 
-    public StreamValuePrecision(Object value, Object precision) {
-        this.value = value;
-        this.precision = precision;
+    public void setLeft(StreamValuePrecision left) {
+        this.left = left;
     }
 
-    public Object getValue() {
-        return value;
+    public StreamValuePrecision getRight() {
+        return right;
     }
 
-    public void setValue(Object value) {
-        this.value = value;
+    public void setRight(StreamValuePrecision right) {
+        this.right = right;
     }
 
-    public Object getPrecision() {
-        return precision;
+    public String getOperator() {
+        return operator;
     }
 
-    public void setPrecision(Object precision) {
-        this.precision = precision;
-    }
-
-    public boolean hasPrecision() {
-        return precision != null;
-    }
-
-    @Override
-    public String toString() {
-        if (precision != null) {
-            return value.toString() + " +/- " + precision.toString();
-        }
-        return value.toString();
+    public void setOperator(String operator) {
+        this.operator = operator;
     }
 }

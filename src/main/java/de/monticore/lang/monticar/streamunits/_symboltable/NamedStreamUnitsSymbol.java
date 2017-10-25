@@ -44,25 +44,38 @@ public class NamedStreamUnitsSymbol extends NamedStreamUnitsSymbolTOP {
         this.id = id;
     }
 
-    public NamedStreamUnitsSymbol(String name, int id, boolean expected, final Collection<Object> timedValues) {
+    public NamedStreamUnitsSymbol(String name, int id, boolean expected, final Collection<StreamInstruction> timedValues) {
         this(name, id);
         this.expected = expected;
         addAll(timedValues);
     }
 
-    protected List<StreamValuePrecision> timeValues = new ArrayList<>();
+    protected List<StreamInstruction> timeValues = new ArrayList<>();
 
-    public void add(Object value) {
-        timeValues.add(new StreamValuePrecision(value));
+    public void add(StreamValueAtTick valueAtTick) {
+        timeValues.add(new StreamInstruction(valueAtTick));
+    }
+
+    public void add(StreamValuePrecision value) {
+        timeValues.add(new StreamInstruction(value));
     }
 
 
-    public void add(Object value,Object precision) {
-        timeValues.add(new StreamValuePrecision(value,precision));
+    public void add(StreamCompare compare) {
+        timeValues.add(new StreamInstruction(compare));
     }
 
-    public void addAll(Collection<Object> values) {
-        for (Object val : values) {
+
+    public void add(Object value, Object precision) {
+        timeValues.add(new StreamInstruction(new StreamValuePrecision(value, precision)));
+    }
+
+    public void add(StreamInstruction streamInstruction) {
+        timeValues.add(streamInstruction);
+    }
+
+    public void addAll(Collection<StreamInstruction> values) {
+        for (StreamInstruction val : values) {
             add(val);
         }
     }
@@ -75,7 +88,7 @@ public class NamedStreamUnitsSymbol extends NamedStreamUnitsSymbolTOP {
         return timeValues.size();
     }
 
-    public Stream<StreamValuePrecision> stream() {
+    public Stream<StreamInstruction> stream() {
         return timeValues.stream();
     }
 
@@ -83,6 +96,7 @@ public class NamedStreamUnitsSymbol extends NamedStreamUnitsSymbolTOP {
      * all stream.nonunitstreams.streams defined in one file have the same id,
      * so that you can match the input stream.nonunitstreams.streams to the corresponding
      * output stream.nonunitstreams.streams if several test cases are defined
+     *
      * @return
      */
     public int getId() {
@@ -92,6 +106,7 @@ public class NamedStreamUnitsSymbol extends NamedStreamUnitsSymbolTOP {
     /**
      * it says whether the stream is expected (e.g. as an assert of an test)
      * or whether the stream is the result of a simulation
+     *
      * @return true if it is expected in an test; false if it is the result of a simulation
      */
     public boolean isExpected() {

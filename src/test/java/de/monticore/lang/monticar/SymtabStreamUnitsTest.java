@@ -22,10 +22,8 @@ package de.monticore.lang.monticar;
 
 import de.monticore.ModelingLanguageFamily;
 import de.monticore.io.paths.ModelPath;
-import de.monticore.lang.monticar.streamunits._symboltable.ComponentStreamUnitsSymbol;
-import de.monticore.lang.monticar.streamunits._symboltable.NamedStreamUnitsSymbol;
-import de.monticore.lang.monticar.streamunits._symboltable.StreamUnitsLanguage;
-import de.monticore.lang.monticar.streamunits._symboltable.StreamValuePrecision;
+import de.monticore.lang.monticar.streamunits._ast.ASTValueAtTick;
+import de.monticore.lang.monticar.streamunits._symboltable.*;
 import de.monticore.symboltable.GlobalScope;
 import de.monticore.symboltable.Scope;
 import de.se_rwth.commons.logging.Log;
@@ -36,6 +34,7 @@ import java.nio.file.Paths;
 import java.util.Collection;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
 /**
@@ -56,7 +55,7 @@ public class SymtabStreamUnitsTest {
     @Test
     public void testResolveComponentStreamUnitsSymbol() {
         Scope symTab = createSymTab("src/test/resources/unitstreams/streams");
-        Log.debug(symTab.toString(),"SymTab:");
+        Log.debug(symTab.toString(), "SymTab:");
         ComponentStreamUnitsSymbol comp = symTab.<ComponentStreamUnitsSymbol>resolve(
                 "basicLibrary.AndTest", ComponentStreamUnitsSymbol.KIND).orElse(null);
         assertNotNull(comp);
@@ -79,8 +78,68 @@ public class SymtabStreamUnitsTest {
         NamedStreamUnitsSymbol namedStreamSymbol = symTab.<NamedStreamUnitsSymbol>resolve(
                 "advancedLibrary.CounterTest.in1", NamedStreamUnitsSymbol.KIND).orElse(null);
         assertNotNull(namedStreamSymbol);
-        assertEquals("1/2 ",((StreamValuePrecision)namedStreamSymbol.getValue(0)).getPrecision().toString());
+        StreamInstruction instruction = (StreamInstruction) namedStreamSymbol.getValue(0);
+
+        assertEquals("1/2 ", (instruction.getStreamValue().get()).getPrecision().toString());
+        assertFalse(instruction.getStreamCompare().isPresent());
     }
+
+    @Test
+    public void testForwardStreamUnit() {
+        Scope symTab = createSymTab("src/test/resources/unitstreams/streams");
+
+        NamedStreamUnitsSymbol namedStreamSymbol = symTab.<NamedStreamUnitsSymbol>resolve(
+                "test.TestForward.direction", NamedStreamUnitsSymbol.KIND).orElse(null);
+        assertNotNull(namedStreamSymbol);
+        assertEquals(5, namedStreamSymbol.getValueSize());
+        for (int i = 0; i < 5; ++i) {
+            StreamInstruction instruction = (StreamInstruction) namedStreamSymbol.getValue(0);
+            assertEquals("FORWARD", (instruction.getStreamValue().get()).getValue().toString());
+            assertFalse(instruction.getStreamCompare().isPresent());
+            assertFalse(instruction.getStreamValueAtTick().isPresent());
+        }
+
+
+        namedStreamSymbol = symTab.<NamedStreamUnitsSymbol>resolve(
+                "test.TestForward.yPosition", NamedStreamUnitsSymbol.KIND).orElse(null);
+        assertNotNull(namedStreamSymbol);
+        assertEquals(5, namedStreamSymbol.getValueSize());
+        {
+            StreamInstruction instruction = (StreamInstruction) namedStreamSymbol.getValue(0);
+            assertEquals("-", (instruction.getStreamValue().get()).getValue().toString());
+            assertFalse(instruction.getStreamCompare().isPresent());
+            assertFalse(instruction.getStreamValueAtTick().isPresent());
+        }
+
+        {
+            StreamInstruction instruction = (StreamInstruction) namedStreamSymbol.getValue(1);
+            assertEquals("yPosition(2)", (instruction.getStreamCompare().get()).getLeft().toString());
+            assertEquals("yPosition(1)", (instruction.getStreamCompare().get()).getRight().toString());
+            assertEquals(">", (instruction.getStreamCompare().get()).getOperator().toString());
+        }
+
+        {
+            StreamInstruction instruction = (StreamInstruction) namedStreamSymbol.getValue(2);
+            assertEquals("yPosition(3)", (instruction.getStreamCompare().get()).getLeft().toString());
+            assertEquals("yPosition(2)", (instruction.getStreamCompare().get()).getRight().toString());
+            assertEquals(">", (instruction.getStreamCompare().get()).getOperator().toString());
+        }
+        {
+            StreamInstruction instruction = (StreamInstruction) namedStreamSymbol.getValue(3);
+            assertEquals("yPosition(4)", (instruction.getStreamCompare().get()).getLeft().toString());
+            assertEquals("yPosition(3)", (instruction.getStreamCompare().get()).getRight().toString());
+            assertEquals(">", (instruction.getStreamCompare().get()).getOperator().toString());
+        }
+        {
+            StreamInstruction instruction = (StreamInstruction) namedStreamSymbol.getValue(4);
+            assertEquals("yPosition(5)", (instruction.getStreamCompare().get()).getLeft().toString());
+            assertEquals("yPosition(4)", (instruction.getStreamCompare().get()).getRight().toString());
+            assertEquals(">", (instruction.getStreamCompare().get()).getOperator().toString());
+        }
+
+
+    }
+
 
     @Ignore("ModelPath#resolveModel does not support loading a collection, which should be done when resolving many")
     @Test

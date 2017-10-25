@@ -365,7 +365,7 @@ grammar Types2 extends de.monticore.lang.monticar.Literals2, siunit.monticoresiu
     ast TypeNameResolutionDeclaration = method public String getTypeName(){
         return getType().toString();
     };
-    TypeNameResolutionDeclaration implements ResolutionDeclaration = Type Name ("=" Resolution);
+    TypeNameResolutionDeclaration implements ResolutionDeclaration = Type Name ("=" Resolution)?;
     ast UnitNumberResolutionDeclaration = method public String getTypeName(){
             return getType().toString();
     };

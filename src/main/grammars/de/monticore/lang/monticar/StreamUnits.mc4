@@ -34,7 +34,20 @@ grammar StreamUnits extends siunit.monticoresiunit.SI, de.monticore.lang.montica
 
   symbol scope NamedStreamUnits = Name ":" Stream ";" ;
 
-  Stream = (PrecisionNumber | SignedLiteral | "tick" )+;
+  Stream = (StreamInstruction | "tick" )+;
+  StreamInstruction = StreamValue | StreamCompare;
+  StreamValue = Name | PrecisionNumber | SignedLiteral | DontCare | ValueAtTick;
+  ValueAtTick = Name "(" (value:UnitNumber|lowerBound:UnitNumber ":" upperBound:UnitNumber ) ")";
+  DontCare = "-";
+  ast StreamCompare = method public ASTStreamValue getLeft(){}
+                      method public ASTStreamValue getRight(){}
+                      method public String getOperator(){};
+  interface StreamCompare;
+  StreamCompareBigger implements StreamCompare = left:StreamValue operator:">" right:StreamValue ;
+  StreamCompareSmaller implements StreamCompare = left:StreamValue operator:"<" right:StreamValue;
+  StreamCompareSmallerEqual implements StreamCompare = left:StreamValue operator:"<=" right:StreamValue;
+  StreamCompareBiggerEqual implements StreamCompare = left:StreamValue operator:">=" right:StreamValue;
+
   PrecisionNumber = UnitNumber (Precision)?;
   Precision = "+" "/" "-" UnitNumber;
 }
